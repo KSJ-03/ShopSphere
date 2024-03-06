@@ -12,11 +12,11 @@ fun validateEmail(email: String): RegisterValidation {
     return RegisterValidation.Success
 }
 
-fun validatePassword(password:String):RegisterValidation{
-    if(password.isEmpty())
-    return RegisterValidation.Failed("Password cannot be empty")
+fun validatePassword(password: String): RegisterValidation {
+    if (password.isEmpty())
+        return RegisterValidation.Failed("Password cannot be empty")
 
-    if(password.length<8)
+    if (password.length < 8)
         return RegisterValidation.Failed("Password should contain at least 8 characters ")
 
     return RegisterValidation.Success

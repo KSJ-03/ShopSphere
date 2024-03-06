@@ -65,10 +65,10 @@ class RegisterFragment : Fragment() {
         }
 
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED){
-                viewModel.validation.collect{validation ->
-                    if(validation.email is RegisterValidation.Failed){
-                        withContext(Dispatchers.Main){
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.validation.collect { validation ->
+                    if (validation.email is RegisterValidation.Failed) {
+                        withContext(Dispatchers.Main) {
                             binding.etEmailRegister.apply {
                                 requestFocus()
                                 error = validation.email.message
@@ -76,13 +76,13 @@ class RegisterFragment : Fragment() {
                         }
                     }
                     if (validation.password is RegisterValidation.Failed) {
-                    withContext(Dispatchers.Main) {
-                        binding.etPasswordRegister.apply {
-                            requestFocus()
-                            error = validation.password.message
+                        withContext(Dispatchers.Main) {
+                            binding.etPasswordRegister.apply {
+                                requestFocus()
+                                error = validation.password.message
+                            }
                         }
                     }
-                }
 
                 }
             }
