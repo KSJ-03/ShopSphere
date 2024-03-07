@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -13,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.shopsphere.R
 import com.example.shopsphere.adapters.BestDealsAdapter
 import com.example.shopsphere.adapters.BestProductsAdapter
@@ -49,6 +51,24 @@ class MainCategoryFragment : Fragment(R.layout.fragment_main_category) {
         setupBestDealsRv()
         setupBestProductsRv()
 
+        binding.rvSpecialProducts.setOnScrollChangeListener { v, scrollX, _, _, _ ->
+            if (v.bottom <= v.width + scrollX) {
+                viewModel.fetchSpecialProducts()
+            }
+        }
+
+        binding.rvBestDealsProducts.setOnScrollChangeListener { v, scrollX, _, _, _ ->
+            if (v.bottom <= v.width + scrollX) {
+                viewModel.fetchBestDeals()
+            }
+        }
+
+        binding.nestedScrollMainCategory.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, _, scrollY, _, _ ->
+            if (v.getChildAt(0).bottom <= v.height + scrollY) {
+                viewModel.fetchBestProducts()
+            }
+        })
+
     }
 
     private fun setupSpecialProductsRv() {
@@ -64,7 +84,7 @@ class MainCategoryFragment : Fragment(R.layout.fragment_main_category) {
         bestProductsAdapter = BestProductsAdapter()
         binding.rvBestProducts.apply {
             layoutManager =
-                GridLayoutManager(requireContext(), 2,GridLayoutManager.VERTICAL,false)
+                GridLayoutManager(requireContext(), 2, GridLayoutManager.VERTICAL, false)
             adapter = bestProductsAdapter
         }
     }
@@ -86,16 +106,16 @@ class MainCategoryFragment : Fragment(R.layout.fragment_main_category) {
                 viewModel.specialProduct.collect {
                     when (it) {
                         is Resource.Loading -> {
-                            showLoading()
+                            binding.specialProductsProgressBar.visibility = View.VISIBLE
                         }
 
                         is Resource.Success -> {
                             specialProductsAdapter.differ.submitList(it.data)
-                            hideLoading()
+                            binding.specialProductsProgressBar.visibility = View.GONE
                         }
 
                         is Resource.Error -> {
-                            hideLoading()
+                            binding.specialProductsProgressBar.visibility = View.GONE
                             Log.e(TAG, it.message.toString())
                             Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
                         }
@@ -111,16 +131,17 @@ class MainCategoryFragment : Fragment(R.layout.fragment_main_category) {
                 viewModel.bestDealsProduct.collect {
                     when (it) {
                         is Resource.Loading -> {
-                            showLoading()
+                            binding.bestDealsProgressBar.visibility = View.VISIBLE
+
                         }
 
                         is Resource.Success -> {
                             bestDealsAdapter.differ.submitList(it.data)
-                            hideLoading()
+                            binding.bestDealsProgressBar.visibility = View.GONE
                         }
 
                         is Resource.Error -> {
-                            hideLoading()
+                            binding.bestDealsProgressBar.visibility = View.GONE
                             Log.e(TAG, it.message.toString())
                             Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
                         }
@@ -131,21 +152,21 @@ class MainCategoryFragment : Fragment(R.layout.fragment_main_category) {
             }
         }
 
-        lifecycleScope . launch {
+        lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.bestProducts.collect {
                     when (it) {
                         is Resource.Loading -> {
-                            showLoading()
+                            binding.bestProductsProgressBar.visibility = View.VISIBLE
                         }
 
                         is Resource.Success -> {
                             bestProductsAdapter.differ.submitList(it.data)
-                            hideLoading()
+                            binding.bestProductsProgressBar.visibility = View.GONE
                         }
 
                         is Resource.Error -> {
-                            hideLoading()
+                            binding.bestProductsProgressBar.visibility = View.GONE
                             Log.e(TAG, it.message.toString())
                             Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
                         }
