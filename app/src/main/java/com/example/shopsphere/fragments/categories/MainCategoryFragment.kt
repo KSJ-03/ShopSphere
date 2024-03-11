@@ -12,6 +12,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -21,6 +22,8 @@ import com.example.shopsphere.adapters.BestProductsAdapter
 import com.example.shopsphere.adapters.SpecialProductsAdapter
 import com.example.shopsphere.databinding.FragmentMainCategoryBinding
 import com.example.shopsphere.util.Resource
+import com.example.shopsphere.util.hideBottomNavigationView
+import com.example.shopsphere.util.showBottomNavigationView
 import com.example.shopsphere.viewmodel.MainCategoryViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -40,6 +43,7 @@ class MainCategoryFragment : Fragment(R.layout.fragment_main_category) {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        hideBottomNavigationView()
         binding = FragmentMainCategoryBinding.inflate(inflater)
         return binding.root
     }
@@ -50,6 +54,21 @@ class MainCategoryFragment : Fragment(R.layout.fragment_main_category) {
         setupSpecialProductsRv()
         setupBestDealsRv()
         setupBestProductsRv()
+
+        specialProductsAdapter.onClick = {
+            val b = Bundle().apply { putParcelable("product", it) }
+            findNavController().navigate(R.id.action_homeFragment_to_productDetailsFragment, b)
+        }
+
+        bestDealsAdapter.onClick = {
+            val b = Bundle().apply { putParcelable("product", it) }
+            findNavController().navigate(R.id.action_homeFragment_to_productDetailsFragment, b)
+        }
+
+        bestProductsAdapter.onClick = {
+            val b = Bundle().apply { putParcelable("product", it) }
+            findNavController().navigate(R.id.action_homeFragment_to_productDetailsFragment, b)
+        }
 
         binding.rvSpecialProducts.setOnScrollChangeListener { v, scrollX, _, _, _ ->
             if (v.bottom <= v.width + scrollX) {
@@ -186,5 +205,10 @@ class MainCategoryFragment : Fragment(R.layout.fragment_main_category) {
         binding.mainCategoryProgressBar.visibility = View.VISIBLE
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        showBottomNavigationView()
+    }
 
 }
