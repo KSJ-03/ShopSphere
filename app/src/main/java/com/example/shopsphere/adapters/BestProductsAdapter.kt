@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.shopsphere.data.Product
 import com.example.shopsphere.databinding.ProductRvItemBinding
+import com.example.shopsphere.helper.getProductPrice
 
 class BestProductsAdapter : RecyclerView.Adapter<BestProductsAdapter.BestProductsViewHolder>() {
     inner class BestProductsViewHolder(private val binding: ProductRvItemBinding) :
@@ -21,8 +22,7 @@ class BestProductsAdapter : RecyclerView.Adapter<BestProductsAdapter.BestProduct
                     if (product.offerPercentage == 0f) {
                         tvNewPrice.visibility = View.INVISIBLE
                     } else {
-                        val remainingPricePercentage = 1f - it
-                        val priceAfterOffer = remainingPricePercentage * product.price
+                        val priceAfterOffer = product.offerPercentage.getProductPrice(product.price)
                         tvNewPrice.text = "$ ${String.format("%.2f", priceAfterOffer)}"
                         tvPrice.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
                     }

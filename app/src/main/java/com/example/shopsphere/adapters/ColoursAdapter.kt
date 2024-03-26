@@ -70,6 +70,6 @@ class ColoursAdapter : RecyclerView.Adapter<ColoursAdapter.ColoursViewHolder>() 
         }
     }
 
-    private var onItemClick: ((Int) -> Unit)? = null
+    var onItemClick: ((Int) -> Unit)? = null
 
 }
