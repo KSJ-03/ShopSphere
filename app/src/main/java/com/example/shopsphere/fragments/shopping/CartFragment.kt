@@ -20,14 +20,18 @@ import com.example.shopsphere.firebase.FirebaseCommon
 import com.example.shopsphere.util.Resource
 import com.example.shopsphere.util.VerticalItemDecoration
 import com.example.shopsphere.viewmodel.CartViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class CartFragment : Fragment(R.layout.fragment_cart) {
 
     private lateinit var binding: FragmentCartBinding
     private val cartProductAdapter by lazy { CartProductAdapter() }
     private val viewModel by activityViewModels<CartViewModel>()
+
+    var totalPrice = 0f
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,6 +47,10 @@ class CartFragment : Fragment(R.layout.fragment_cart) {
 
         setupCartRv()
 
+        binding.imageCloseCart.setOnClickListener {
+            findNavController().navigateUp()
+        }
+
         cartProductAdapter.onProductClick = {
             val b = Bundle().apply { putParcelable("product", it.product) }
             findNavController().navigate(R.id.action_cartFragment_to_productDetailsFragment, b)
@@ -54,6 +62,14 @@ class CartFragment : Fragment(R.layout.fragment_cart) {
 
         cartProductAdapter.onMinusClick = {
             viewModel.changeQuantity(it, FirebaseCommon.QuantityChanging.DECREASE)
+        }
+
+        binding.buttonCheckOut.setOnClickListener {
+            val action = CartFragmentDirections.actionCartFragmentToBillingFragment(
+                totalPrice,
+                cartProductAdapter.differ.currentList.toTypedArray()
+            )
+            findNavController().navigate(action)
         }
     }
 
@@ -98,7 +114,8 @@ class CartFragment : Fragment(R.layout.fragment_cart) {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.productPrice.collectLatest { price ->
-                    price.let {
+                    price?.let {
+                        totalPrice = it
                         binding.tvTotalPrice.text = "$ ${String.format("%.2f", price)}"
                     }
                 }
