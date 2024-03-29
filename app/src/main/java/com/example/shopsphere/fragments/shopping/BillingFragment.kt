@@ -1,5 +1,6 @@
 package com.example.shopsphere.fragments.shopping
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,11 +18,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.shopsphere.R
 import com.example.shopsphere.adapters.AddressAdapter
 import com.example.shopsphere.adapters.BillingProductsAdapter
+import com.example.shopsphere.data.Address
 import com.example.shopsphere.data.CartProduct
+import com.example.shopsphere.data.order.Order
+import com.example.shopsphere.data.order.OrderStatus
 import com.example.shopsphere.databinding.FragmentBillingBinding
 import com.example.shopsphere.util.HorizontalItemDecoration
 import com.example.shopsphere.util.Resource
 import com.example.shopsphere.viewmodel.BillingViewModel
+import com.example.shopsphere.viewmodel.OrderViewModel
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -31,10 +37,13 @@ class BillingFragment : Fragment() {
     private lateinit var binding: FragmentBillingBinding
     private val addressAdapter by lazy { AddressAdapter() }
     private val billingProductsAdapter by lazy { BillingProductsAdapter() }
-    val viewModel by viewModels<BillingViewModel>()
+    val billingViewModel by viewModels<BillingViewModel>()
     private val args by navArgs<BillingFragmentArgs>()
     private var products = emptyList<CartProduct>()
     private var totalPrice = 0f
+
+    private var selectedAddress: Address? = null
+    private val orderViewModel by viewModels<OrderViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -68,6 +77,40 @@ class BillingFragment : Fragment() {
             findNavController().navigate(R.id.action_billingFragment_to_productDetailsFragment, b)
         }
 
+        addressAdapter.onClick = {
+            selectedAddress = it
+        }
+
+        binding.buttonPlaceOrder.setOnClickListener {
+            if (selectedAddress == null) {
+                Toast.makeText(requireContext(), "Please select an address", Toast.LENGTH_SHORT)
+                    .show()
+                return@setOnClickListener
+            }
+            showOrderConfirmationDialog()
+        }
+    }
+
+    private fun showOrderConfirmationDialog() {
+        val alertDialog = AlertDialog.Builder(requireContext()).apply {
+            setTitle("Order items")
+            setMessage("Do you want to order your cart items?")
+            setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }
+            setPositiveButton("Order") { dialog, _ ->
+                val order = Order(
+                    OrderStatus.Ordered.status,
+                    totalPrice,
+                    products,
+                    selectedAddress!!
+                )
+                orderViewModel.placeOrder(order)
+                dialog.dismiss()
+            }
+        }
+        alertDialog.create()
+        alertDialog.show()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,7 +121,7 @@ class BillingFragment : Fragment() {
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.address.collectLatest {
+                billingViewModel.address.collectLatest {
                     when (it) {
                         is Resource.Loading -> {
                             binding.progressbarAddress.visibility = View.VISIBLE
@@ -98,6 +141,28 @@ class BillingFragment : Fragment() {
                             ).show()
                         }
 
+                        else -> Unit
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED){
+                orderViewModel.order.collectLatest {
+                    when(it){
+                        is Resource.Loading->{
+                            binding.buttonPlaceOrder.startAnimation()
+                        }
+                        is Resource.Success->{
+                            binding.buttonPlaceOrder.revertAnimation()
+                            findNavController().navigateUp()
+                            Snackbar.make(requireView(),"Your order was placed!",Snackbar.LENGTH_LONG).show()
+                        }
+                        is Resource.Error->{
+                            binding.buttonPlaceOrder.revertAnimation()
+                            Toast.makeText(requireContext(), it.message.toString(), Toast.LENGTH_SHORT).show()
+                        }
                         else -> Unit
                     }
                 }
