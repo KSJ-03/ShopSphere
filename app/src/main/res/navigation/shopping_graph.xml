@@ -85,5 +85,18 @@
         android:id="@+id/allOrdersFragment"
         android:name="com.example.shopsphere.fragments.settings.AllOrdersFragment"
         android:label="AllOrdersFragment"
-        tools:layout="@layout/fragment_orders"/>
+        tools:layout="@layout/fragment_orders">
+        <action
+            android:id="@+id/action_allOrdersFragment_to_orderDetailsFragment"
+            app:destination="@id/orderDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/orderDetailsFragment"
+        android:name="com.example.shopsphere.fragments.settings.OrderDetailsFragment"
+        android:label="OrderDetailsFragment"
+        tools:layout="@layout/fragment_order_details">
+        <argument
+            android:name="order"
+            app:argType="com.example.shopsphere.data.order.Order" />
+    </fragment>
 </navigation>

@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shopsphere.adapters.AllOrdersAdapter
@@ -40,6 +41,16 @@ class AllOrdersFragment:Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupOrdersRv()
+
+        ordersAdapter.onClick = {
+            val action = AllOrdersFragmentDirections.actionAllOrdersFragmentToOrderDetailsFragment(it)
+            findNavController().navigate(action)
+        }
+
+        binding.imageCloseOrders.setOnClickListener {
+            findNavController().navigateUp()
+        }
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,6 +79,7 @@ class AllOrdersFragment:Fragment() {
                 }
             }
         }
+
     }
 
     private fun setupOrdersRv() {

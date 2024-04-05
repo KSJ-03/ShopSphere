@@ -37,6 +37,12 @@
     </LinearLayout>
 
     <TextView
+        android:id="@+id/tvOrderStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="@tools:sample/lorem" />
+
+    <TextView
         android:id="@+id/tvOrderDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

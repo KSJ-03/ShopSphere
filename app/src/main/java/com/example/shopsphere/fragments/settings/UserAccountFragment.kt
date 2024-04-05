@@ -69,6 +69,10 @@ class UserAccountFragment : Fragment() {
             }
         }
 
+        binding.imageCloseUserAccount.setOnClickListener {
+            findNavController().navigateUp()
+        }
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

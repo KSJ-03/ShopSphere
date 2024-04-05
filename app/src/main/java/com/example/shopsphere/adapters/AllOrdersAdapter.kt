@@ -19,6 +19,7 @@ class AllOrdersAdapter : Adapter<AllOrdersAdapter.AllOrdersViewHolder>() {
             binding.apply {
                 tvOrderId.text = order.orderId.toString()
                 tvOrderDate.text = order.date
+                tvOrderStatus.text = order.orderStatus
                 val resources = itemView.resources
 
                 val colourDrawable = when(getOrderStatus(order.orderStatus)){
@@ -61,6 +62,11 @@ class AllOrdersAdapter : Adapter<AllOrdersAdapter.AllOrdersViewHolder>() {
     override fun onBindViewHolder(holder: AllOrdersViewHolder, position: Int) {
         val order = differ.currentList[position]
         holder.bind(order)
+
+        holder.itemView.setOnClickListener{
+            onClick?.invoke(order)
+        }
+
     }
 
     var onClick: ((Order) -> Unit)? = null
