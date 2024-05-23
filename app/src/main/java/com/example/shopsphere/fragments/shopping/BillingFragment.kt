@@ -60,6 +60,15 @@ class BillingFragment : Fragment() {
         setupBillingProductsRv()
         setupAddressRv()
 
+        if (!args.payment) {
+            binding.apply {
+                buttonPlaceOrder.visibility = View.INVISIBLE
+                totalBoxContainer.visibility = View.INVISIBLE
+                middleLine.visibility = View.INVISIBLE
+                bottomLine.visibility = View.INVISIBLE
+            }
+        }
+
         binding.imageCloseBilling.setOnClickListener {
             findNavController().navigateUp()
         }
@@ -79,6 +88,10 @@ class BillingFragment : Fragment() {
 
         addressAdapter.onClick = {
             selectedAddress = it
+            if (!args.payment) {
+                val b = Bundle().apply { putParcelable("address", selectedAddress) }
+                findNavController().navigate(R.id.action_billingFragment_to_addressFragment, b)
+            }
         }
 
         binding.buttonPlaceOrder.setOnClickListener {
@@ -148,21 +161,32 @@ class BillingFragment : Fragment() {
         }
 
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED){
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
                 orderViewModel.order.collectLatest {
-                    when(it){
-                        is Resource.Loading->{
+                    when (it) {
+                        is Resource.Loading -> {
                             binding.buttonPlaceOrder.startAnimation()
                         }
-                        is Resource.Success->{
+
+                        is Resource.Success -> {
                             binding.buttonPlaceOrder.revertAnimation()
                             findNavController().navigateUp()
-                            Snackbar.make(requireView(),"Your order was placed!",Snackbar.LENGTH_LONG).show()
+                            Snackbar.make(
+                                requireView(),
+                                "Your order was placed!",
+                                Snackbar.LENGTH_LONG
+                            ).show()
                         }
-                        is Resource.Error->{
+
+                        is Resource.Error -> {
                             binding.buttonPlaceOrder.revertAnimation()
-                            Toast.makeText(requireContext(), it.message.toString(), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                requireContext(),
+                                it.message.toString(),
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
+
                         else -> Unit
                     }
                 }

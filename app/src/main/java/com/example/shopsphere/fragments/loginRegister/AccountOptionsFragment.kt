@@ -9,7 +9,9 @@ import androidx.navigation.fragment.findNavController
 import com.example.shopsphere.R
 import com.example.shopsphere.databinding.ActivityShoppingBinding
 import com.example.shopsphere.databinding.FragmentAccountOptionsBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class AccountOptionsFragment : Fragment(R.layout.fragment_account_options) {
 
     private lateinit var binding: FragmentAccountOptionsBinding

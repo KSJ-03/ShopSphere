@@ -47,9 +47,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Don't have an account? Register"
+            android:text="Don't have an account? "
             android:textAlignment="center"
             app:layout_constraintStart_toStartOf="@id/tvLetsLogin"
+            app:layout_constraintTop_toBottomOf="@id/tvLetsLogin" />
+
+        <TextView
+            android:id="@+id/tvDontHaveAccountRegister"
+            style="@style/h2"
+            android:textColor="@color/g_blue"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Register"
+            android:textAlignment="center"
+            app:layout_constraintStart_toEndOf="@id/tvDontHaveAccount"
             app:layout_constraintTop_toBottomOf="@id/tvLetsLogin" />
 
         <EditText
@@ -62,7 +75,7 @@
             android:inputType="textEmailAddress"
             app:layout_constraintEnd_toEndOf="@id/guidelineLoginRight"
             app:layout_constraintStart_toStartOf="@id/guidelineLoginLeft"
-            app:layout_constraintTop_toBottomOf="@id/tvDontHaveAccount" />
+            app:layout_constraintTop_toBottomOf="@id/tvDontHaveAccountRegister" />
 
         <EditText
             android:id="@+id/etPasswordLogin"
@@ -85,7 +98,8 @@
             android:gravity="center"
             android:text="Forgot password"
             android:textAlignment="center"
-            android:textColor="@color/black"
+            android:textColor="@color/g_blue"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@id/guidelineLoginLeft"
             app:layout_constraintTop_toBottomOf="@id/etPasswordLogin" />
 
@@ -102,29 +116,12 @@
             app:spinning_bar_color="@color/white"/>
 
         <ImageView
-            android:id="@+id/facebookLogin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="13dp"
-            android:src="@drawable/facebook_login"
-            app:layout_constraintStart_toStartOf="@id/guidelineLoginLeft"
-            app:layout_constraintTop_toBottomOf="@+id/buttonLoginLogin" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Facebook"
-            app:layout_constraintBottom_toBottomOf="@id/facebookLogin"
-            app:layout_constraintEnd_toEndOf="@id/facebookLogin"
-            app:layout_constraintStart_toStartOf="@+id/facebookLogin"
-            app:layout_constraintTop_toTopOf="@id/facebookLogin" />
-
-        <ImageView
             android:id="@+id/googleLogin"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="13dp"
             android:src="@drawable/google_login"
+            app:layout_constraintStart_toStartOf="@+id/guidelineLoginLeft"
             app:layout_constraintEnd_toEndOf="@+id/guidelineLoginRight"
             app:layout_constraintTop_toBottomOf="@+id/buttonLoginLogin" />
 
@@ -132,6 +129,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Google"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/poppins_light"
             app:layout_constraintBottom_toBottomOf="@id/googleLogin"
             app:layout_constraintEnd_toEndOf="@id/googleLogin"
             app:layout_constraintStart_toStartOf="@+id/googleLogin"

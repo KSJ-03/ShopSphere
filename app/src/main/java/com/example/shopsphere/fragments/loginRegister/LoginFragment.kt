@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.credentials.CredentialManager
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -19,12 +20,12 @@ import com.example.shopsphere.dialog.setupBottomSheetDialog
 import com.example.shopsphere.util.Resource
 import com.example.shopsphere.viewmodel.LoginViewModel
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class LoginFragment : Fragment(R.layout.fragment_login) {
-
     private lateinit var binding: FragmentLoginBinding
     private val viewModel by viewModels<LoginViewModel>()
 
@@ -40,7 +41,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.tvDontHaveAccount.setOnClickListener {
+        binding.tvDontHaveAccountRegister.setOnClickListener {
             findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
         }
 
@@ -58,6 +59,10 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             }
         }
 
+        binding.googleLogin.setOnClickListener {
+            viewModel.googleLogin(requireContext())
+        }
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,7 +78,10 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
                         is Resource.Success -> {
                             binding.buttonLoginLogin.revertAnimation()
-                            Intent(requireActivity(), ShoppingActivity::class.java).also { intent ->
+                            Intent(
+                                requireActivity(),
+                                ShoppingActivity::class.java
+                            ).also { intent ->
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                                 // pop the activity from the stack so that when users log into their account, they will navigate to the shopping activity and if they navigate back we dont need to go back to login and register activity
                                 startActivity(intent)
@@ -82,7 +90,8 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                         }
 
                         is Resource.Error -> {
-                            Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
+                            Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG)
+                                .show()
                             binding.buttonLoginLogin.revertAnimation()
                         }
 

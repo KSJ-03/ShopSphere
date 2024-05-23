@@ -11,6 +11,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.example.shopsphere.data.Address
 import com.example.shopsphere.databinding.FragmentAddressBinding
 import com.example.shopsphere.util.Resource
@@ -24,6 +25,7 @@ class AddressFragment : Fragment() {
 
     private lateinit var binding: FragmentAddressBinding
     val viewModel by viewModels<AddressViewModel>()
+    val args by navArgs<AddressFragmentArgs>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,6 +77,21 @@ class AddressFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val addressArgs = args.address
+        if (addressArgs == null) {
+            binding.buttonDelelte.visibility = View.GONE
+        } else {
+            binding.apply {
+                etAddressTitle.setText(addressArgs.addressTitle)
+                etFullName.setText(addressArgs.fullName)
+                etAddressLine1.setText(addressArgs.addressLine1)
+                etStreet.setText(addressArgs.street)
+                etPhone.setText(addressArgs.phone)
+                etCity.setText(addressArgs.city)
+                etState.setText(addressArgs.state)
+            }
+        }
 
         binding.apply {
             buttonSave.setOnClickListener {
