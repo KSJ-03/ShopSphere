@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.shopsphere.data.CartProduct
-import com.example.shopsphere.data.Product
 import com.example.shopsphere.databinding.CartProductItemBinding
 import com.example.shopsphere.helper.getProductPrice
 
