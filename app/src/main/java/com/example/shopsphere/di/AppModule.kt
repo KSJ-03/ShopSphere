@@ -1,6 +1,7 @@
 package com.example.shopsphere.di
 
 import android.app.Application
+import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import com.example.shopsphere.firebase.FirebaseCommon
 import com.example.shopsphere.util.Constants.INTRODUCTION_SP
@@ -12,6 +13,7 @@ import com.google.firebase.storage.FirebaseStorage
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -30,6 +32,12 @@ object AppModule {
     @Provides
     fun provideIntroductionSP(application: Application) =
         application.getSharedPreferences(INTRODUCTION_SP, MODE_PRIVATE)
+
+    @Provides
+    @Singleton
+    fun provideContext(@ApplicationContext appContext: Context): Context {
+        return appContext
+    }
 
     @Provides
     @Singleton

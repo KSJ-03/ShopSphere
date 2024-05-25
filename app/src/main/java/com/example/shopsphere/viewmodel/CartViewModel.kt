@@ -120,4 +120,5 @@ class CartViewModel @Inject constructor(
                 viewModelScope.launch { _cartProducts.emit(Resource.Error(exception.message.toString())) }
         }
     }
+
 }

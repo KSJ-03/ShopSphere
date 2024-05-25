@@ -105,15 +105,20 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
             })
 
-            setOnQueryTextFocusChangeListener { v, hasFocus ->
+            setOnQueryTextFocusChangeListener { _, hasFocus ->
                 if (hasFocus) {
-                    binding.searchRv.visibility = View.VISIBLE
+                    binding.searchConstraintLayout.visibility = View.VISIBLE
                     hideBottomNavigationView()
                 } else {
                     setQuery("", false)
-                    binding.searchRv.visibility = View.GONE
+                    binding.searchConstraintLayout.visibility = View.GONE
                     showBottomNavigationView()
                 }
+            }
+
+            setOnCloseListener {
+                binding.searchConstraintLayout.visibility = View.GONE
+                true
             }
         }
     }
@@ -126,16 +131,20 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 viewModel.search.collectLatest {
                     when (it) {
                         is Resource.Loading -> {
-                            binding.searchRv.visibility = View.VISIBLE
+
                         }
 
                         is Resource.Success -> {
-                            binding.searchRv.visibility = View.VISIBLE
-                            searchProductAdapter.differ.submitList(it.data)
+                            if (it.data.isNullOrEmpty()){
+                                binding.searchConstraintLayout.visibility = View.GONE
+                            }else{
+                                binding.searchConstraintLayout.visibility = View.VISIBLE
+                            }
+                                searchProductAdapter.differ.submitList(it.data)
                         }
 
                         is Resource.Error -> {
-                            binding.searchRv.visibility = View.GONE
+                            binding.searchConstraintLayout.visibility = View.GONE
                             Toast.makeText(
                                 requireContext(),
                                 it.message.toString(),

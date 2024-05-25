@@ -94,9 +94,11 @@
         app:layout_constraintTop_toBottomOf="@id/tabLayout" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/searchConstraintLayout"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_marginTop="70dp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="@id/rightGuideLine"
         app:layout_constraintStart_toStartOf="@id/leftGuideLine"
         app:layout_constraintTop_toBottomOf="@id/homeHeader">
@@ -111,7 +113,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="5dp"
-                android:visibility="gone"
                 android:background="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

@@ -1,7 +1,9 @@
 package com.example.shopsphere.fragments.shopping
 
 import android.app.AlertDialog
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,9 +30,12 @@ import com.example.shopsphere.util.Resource
 import com.example.shopsphere.viewmodel.BillingViewModel
 import com.example.shopsphere.viewmodel.OrderViewModel
 import com.google.android.material.snackbar.Snackbar
+import com.razorpay.Checkout
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import org.json.JSONObject
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class BillingFragment : Fragment() {
@@ -44,6 +49,9 @@ class BillingFragment : Fragment() {
 
     private var selectedAddress: Address? = null
     private val orderViewModel by viewModels<OrderViewModel>()
+
+    @Inject
+    lateinit var application: Context
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -119,6 +127,7 @@ class BillingFragment : Fragment() {
                     selectedAddress!!
                 )
                 orderViewModel.placeOrder(order)
+                startPayment()
                 dialog.dismiss()
             }
         }
@@ -128,6 +137,12 @@ class BillingFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        /*
+        * To ensure faster loading of the Checkout form,
+        * call this method as early as possible in your checkout flow
+        * */
+        Checkout.preload(application)
 
         products = args.products.toList()
         totalPrice = args.totalPrice
@@ -191,6 +206,38 @@ class BillingFragment : Fragment() {
                     }
                 }
             }
+        }
+    }
+
+    private fun startPayment() {
+        try {
+            val co = Checkout()
+            co.setKeyID("rzp_test_FXQpXHXIzRl0XD")
+
+            val options = JSONObject()
+            options.put("name", "ShopSphere")
+            options.put("description", "E=Commerce App")
+            //You can omit the image option to fetch the image from the dashboard
+            options.put("image", R.drawable.ic_kleine_shape)
+            options.put("theme.color", "#FF3700B3");
+            options.put("currency", "INR");
+            options.put("amount", totalPrice.toInt() * 100)//pass amount in currency subunits
+
+            val retryObj = JSONObject();
+            retryObj.put("enabled", true);
+            retryObj.put("max_count", 4);
+            options.put("retry", retryObj);
+
+            val prefill = JSONObject()
+            prefill.put("email", "kuldeepjhala03@gmail.com")
+            prefill.put("contact", "9167673619")
+
+            options.put("prefill", prefill)
+            co.open(activity, options)
+        } catch (e: Exception) {
+            Log.d("razorpay", "Error in payment: " + e.message)
+            Toast.makeText(activity, "Error in payment: " + e.message, Toast.LENGTH_LONG).show()
+            e.printStackTrace()
         }
     }
 

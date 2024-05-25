@@ -93,6 +93,7 @@
         <argument
             android:name="payment"
             app:argType="boolean" />
+
     </fragment>
     <fragment
         android:id="@+id/userAccountFragment"

@@ -21,7 +21,7 @@ class HomeSearchViewModel @Inject constructor(
 
 
     fun searchProducts(query: String) {
-        viewModelScope.launch { _search.emit(Resource.Loading()) }
+            viewModelScope.launch { _search.emit(Resource.Loading()) }
         if (query.isBlank()) {
             viewModelScope.launch { _search.emit(Resource.Success(emptyList())) }
             return

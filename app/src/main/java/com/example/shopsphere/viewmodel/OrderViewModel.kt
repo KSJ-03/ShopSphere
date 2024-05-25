@@ -35,17 +35,19 @@ class OrderViewModel @Inject constructor(
 
             firestore.collection("orders").document().set(order)
 
-            firestore.collection("user").document(auth.uid!!).collection("cart").get()
-                .addOnSuccessListener {
-                    it.documents.forEach {
-                        it.reference.delete()
-                    }
-                }
-
         }.addOnSuccessListener {
             viewModelScope.launch { _order.emit(Resource.Success(order)) }
         }.addOnFailureListener {
             viewModelScope.launch { _order.emit(Resource.Error(it.message.toString())) }
         }
+    }
+
+    fun clearCart(){
+        firestore.collection("user").document(auth.uid!!).collection("cart").get()
+            .addOnSuccessListener {
+                it.documents.forEach {
+                    it.reference.delete()
+                }
+            }
     }
 }
